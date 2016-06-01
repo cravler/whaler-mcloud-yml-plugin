@@ -1,0 +1,30 @@
+{
+  "name": "whaler-mcloud-yml-plugin",
+  "description": "mcloud.yml integration plugin",
+  "author": {
+    "name": "Sergei Vizel",
+    "email": "sergei.vizel@gmail.com",
+    "url": "https://github.com/cravler"
+  },
+  "homepage": "https://github.com/cravler/whaler-mcloud-yml-plugin",
+  "keywords": [
+    "whaler",
+    "mcloud",
+    "plugin"
+  ],
+  "license": "MIT",
+  "version": "0.1.0",
+  "main": "index.js",
+  "whaler-plugin": true,
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:cravler/whaler-mcloud-yml-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cravler/whaler-mcloud-yml-plugin/issues"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
