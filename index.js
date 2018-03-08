@@ -1,31 +1,42 @@
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
+const fs = require('fs/promises');
+const path = require('path');
 
 module.exports = exports;
 
 /**
  * @param whaler
  */
-function exports(whaler) {
+async function exports (whaler) {
 
-    whaler.before('config', function* (options) {
-        const storage = whaler.get('apps');
-        const app = yield storage.get.$call(storage, options['name']);
+    let tmpFile = null;
 
+    whaler.before('config', async ctx => {
         let configFile = null;
-        if (options['file']) {
-            configFile = options['file'];
+
+        if (ctx.options['file']) {
+            configFile = ctx.options['file'];
         }
 
-        if (options['update'] && !configFile) {
+        if (ctx.options['update'] && !configFile) {
+            const { default: storage } = await whaler.fetch('apps');
+            const app = await storage.get(ctx.options['name']);
             configFile = app.config['file'] || null;
         }
 
         if (configFile && 'mcloud.yml' === path.basename(configFile)) {
-            let content = yield fs.readFile.$call(null, configFile, 'utf8');
-            options['yml'] = 'services:\n    ' + content.split('\n').join('\n    ');
+            tmpFile = configFile + '.tmp';
+            let content = await fs.readFile(configFile, 'utf8');
+            const yml = 'services:\n    ' + content.split('\n').join('\n    ');
+            await fs.writeFile(tmpFile, yml, 'utf8');
+        }
+    });
+
+    whaler.after('config', async ctx => {
+        if (tmpFile) {
+            await fs.unlink(tmpFile);
+            tmpFile = null;
         }
     });
 
