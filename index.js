@@ -5,8 +5,6 @@ const util = require('util');
 const path = require('path');
 
 const fsReadFile = util.promisify(fs.readFile);
-const fsWriteFile = util.promisify(fs.writeFile);
-const fsUnlink = util.promisify(fs.unlink);
 
 module.exports = exports;
 
@@ -14,8 +12,6 @@ module.exports = exports;
  * @param whaler
  */
 async function exports (whaler) {
-
-    let tmpFile = null;
 
     whaler.before('config', async ctx => {
         let configFile = null;
@@ -31,17 +27,9 @@ async function exports (whaler) {
         }
 
         if (configFile && 'mcloud.yml' === path.basename(configFile)) {
-            tmpFile = configFile + '.tmp';
             let content = await fsReadFile(configFile, 'utf8');
             const yml = 'services:\n    ' + content.split('\n').join('\n    ');
-            await fsWriteFile(tmpFile, yml, 'utf8');
-        }
-    });
-
-    whaler.after('config', async ctx => {
-        if (tmpFile) {
-            await fsUnlink(tmpFile);
-            tmpFile = null;
+            ctx.options['yml'] = yml;
         }
     });
 
